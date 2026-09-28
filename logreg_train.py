@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+import math
 
 FEATURES = [
     "Astronomy", "Herbology", "Divination", "Muggle Studies",
@@ -41,6 +42,34 @@ def standardize(df, features, means, stds):
                 x.append((v - means[f]) / stds[f])
         X.append(x)
     return X
+
+
+def sigmoid(z):
+    if z < -500:
+        return 0.0
+    return 1.0 / (1.0 + math.exp(-z))
+
+
+def dot(theta, x):
+    total = 0.0
+    for i in range(len(theta)):
+        total += theta[i] * x[i]
+    return total
+
+
+def hypothesis(theta, x):
+    return sigmoid(dot(theta, x))
+
+
+def cost(theta, X, y):
+    m = len(X)
+    eps = 1e-15
+    total = 0.0
+    for i in range(m):
+        h = hypothesis(theta, X[i])
+        h = min(max(h, eps), 1 - eps)
+        total += y[i] * math.log(h) + (1 - y[i]) * math.log(1 - h)
+    return -total / m
 
 
 def main():
