@@ -1,5 +1,6 @@
 import sys
 import pandas as pd
+import json
 import math
 
 FEATURES = [
@@ -123,6 +124,15 @@ def main():
         y = [1 if h == house else 0 for h in df["Hogwarts House"]]
         weights[house] = train(X, y, LEARNING_RATE, ITERATIONS)
 
+    model = {
+    "features": FEATURES,
+    "means": means,
+    "stds": stds,
+    "weights": weights,
+    }
+    with open("weights.json", "w") as f:
+        json.dump(model, f, indent=4)
+    print("Weights saved to weights.json")
 
 if __name__ == "__main__":
     main()
