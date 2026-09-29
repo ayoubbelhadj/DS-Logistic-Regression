@@ -9,6 +9,8 @@ FEATURES = [
 ]
 HOUSES = ["Gryffindor" , "Hufflepuff", "Ravenclaw", "Slytherin"]
 
+LEARNING_RATE = 0.5
+ITERATIONS = 1000
 
 def mean(values):
     total = 0.0
@@ -72,6 +74,30 @@ def cost(theta, X, y):
     return -total / m
 
 
+def gradient(theta, X, y):
+    m = len(X)
+    n = len(theta)
+    grad = [0.0] * n
+    for i in range(m):
+        error = hypothesis(theta, X[i]) - y[i]
+        for j in range(n):
+            grad[j] += error * X[i][j]
+    for j in range(n):
+        grad[j] /= m
+    return grad
+
+
+def train(X, y, learning_rate, iterations):
+    theta = [0.0] * len(X[0])
+    for it in range(iterations):
+        grad = gradient(theta, X, y)
+        for j in range(len(theta)):
+            theta[j] -= learning_rate * grad[j]
+        if it % 100 == 0 or it == iterations - 1:
+            print(f"  iteration {it}: cost = {cost(theta, X, y):.6f}")
+    return theta
+
+
 def main():
     if len(sys.argv) != 2:
         print("Usage: python3 logreg_train.py dataset_train.csv")
@@ -90,6 +116,13 @@ def main():
     means = {f: mean(df[f]) for f in FEATURES}
     stds = {f: std(df[f], means[f]) for f in FEATURES}
     X = standardize(df, FEATURES, means, stds)
+
+    weights = {}
+    for house in HOUSES:
+        print(f"Training {house} vs all")
+        y = [1 if h == house else 0 for h in df["Hogwarts House"]]
+        weights[house] = train(X, y, LEARNING_RATE, ITERATIONS)
+
 
 if __name__ == "__main__":
     main()
