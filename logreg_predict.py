@@ -1,0 +1,23 @@
+import sys
+import json
+import pandas as pd
+
+def load_model(path):
+    with open(path, "r") as f:
+        return json.load(f)
+
+
+def main():
+    if len(sys.argv) != 3:
+        print("Usage: python3 logreg_predict.py dataset_test.csv weights.json")
+        sys.exit(1)
+    try:
+        df = pd.read_csv(sys.argv[1])
+        model = load_model(sys.argv[2])
+    except Exception as e:
+        print(f"Error: {e}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()
