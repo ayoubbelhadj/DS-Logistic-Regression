@@ -1,6 +1,7 @@
 import sys
 import json
 import pandas as pd
+from logreg_train import standardize
 
 def load_model(path):
     with open(path, "r") as f:
@@ -23,6 +24,9 @@ def main():
     if missing:
         print(f"Error: missing columns in dataset: {missing}")
         sys.exit(1)
+
+    X = standardize(df, features, model["means"], model["stds"])
+    houses = list(model["weights"].keys())
 
 
 if __name__ == "__main__":
