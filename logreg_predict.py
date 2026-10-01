@@ -18,6 +18,12 @@ def main():
         print(f"Error: {e}")
         sys.exit(1)
 
+    features = model["features"]
+    missing = [c for c in features + ["Index"] if c not in df.columns]
+    if missing:
+        print(f"Error: missing columns in dataset: {missing}")
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
