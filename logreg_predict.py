@@ -1,12 +1,24 @@
 import sys
 import json
 import pandas as pd
-from logreg_train import standardize
+from logreg_train import standardize, hypothesis
 
 def load_model(path):
     with open(path, "r") as f:
         return json.load(f)
 
+def predict(X, weights, houses):
+    predictions = []
+    for x in X:
+        best_house = None
+        best_prob = -1.0
+        for house in houses:
+            prob = hypothesis(weights[house], x)
+            if prob > best_prob:
+                best_prob = prob
+                best_house = house
+        predictions.append(best_house)
+    return predictions
 
 def main():
     if len(sys.argv) != 3:
@@ -27,6 +39,7 @@ def main():
 
     X = standardize(df, features, model["means"], model["stds"])
     houses = list(model["weights"].keys())
+    predictions = predict(X, model["weights"], houses)
 
 
 if __name__ == "__main__":
