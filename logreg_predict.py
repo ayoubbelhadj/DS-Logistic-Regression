@@ -3,9 +3,11 @@ import json
 import pandas as pd
 from logreg_train import standardize, hypothesis
 
+
 def load_model(path):
     with open(path, "r") as f:
         return json.load(f)
+
 
 def predict(X, weights, houses):
     predictions = []
@@ -19,6 +21,14 @@ def predict(X, weights, houses):
                 best_house = house
         predictions.append(best_house)
     return predictions
+
+
+def save_predictions(indexes, predictions, path):
+    with open(path, "w") as f:
+        f.write("Index,Hogwarts House\n")
+        for i in range(len(predictions)):
+            f.write(f"{indexes[i]},{predictions[i]}\n")
+
 
 def main():
     if len(sys.argv) != 3:
@@ -40,6 +50,8 @@ def main():
     X = standardize(df, features, model["means"], model["stds"])
     houses = list(model["weights"].keys())
     predictions = predict(X, model["weights"], houses)
+    save_predictions(list(df["Index"]), predictions, "houses.csv")
+    print("Predictions saved to houses.csv")
 
 
 if __name__ == "__main__":
