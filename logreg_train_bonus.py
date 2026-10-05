@@ -128,6 +128,8 @@ def main():
     config = OPTIMIZERS[optimizer]
     try:
         df = pd.read_csv(sys.argv[1])
+        if len(df) == 0:
+            error("dataset is empty")
     except Exception as e:
         error(f"could not read {sys.argv[1]}: {e}")
 
