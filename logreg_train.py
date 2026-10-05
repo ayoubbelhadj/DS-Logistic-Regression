@@ -13,6 +13,10 @@ HOUSES = ["Gryffindor" , "Hufflepuff", "Ravenclaw", "Slytherin"]
 LEARNING_RATE = 0.5
 ITERATIONS = 1000
 
+def error(msg):
+    print(f"Error: {msg}")
+    sys.exit(1)
+
 def mean(values):
     total = 0.0
     count = 0
@@ -105,14 +109,14 @@ def main():
         sys.exit(1)
     try:
         df = pd.read_csv(sys.argv[1])
+        if len(df) == 0:
+            error("dataset is empty")
     except Exception as e:
-        print(f"Error: could not read {sys.argv[1]}: {e}")
-        sys.exit(1)
+        error(f"could not read {sys.argv[1]}: {e}")
 
     missing = [c for c in FEATURES + ["Hogwarts House"] if c not in df.columns]
     if missing:
-        print(f"Error: missing columns in dataset: {missing}")
-        sys.exit(1)
+        error(f"missing columns in dataset: {missing}")
 
     means = {f: mean(df[f]) for f in FEATURES}
     stds = {f: std(df[f], means[f]) for f in FEATURES}
